@@ -23,14 +23,13 @@ struct WheelView: View {
     // wheel 전체를 조절하는 값
     @State var degree = 0.0
     
-    let array : [MyValue]
-    let circleSize : Double
-    
+    let myValues: [MyValue]
+    let circleSize: Double
     
     var body: some View {
         
         ZStack {
-            let anglePerCount = Double.pi * 2.0 / Double(array.count)
+            let anglePerCount = Double.pi * 2.0 / Double(myValues.count)
             
             let drag = DragGesture()
                 .onEnded { value in
@@ -50,15 +49,14 @@ struct WheelView: View {
                     .hueRotation(Angle(degrees: degree))
                 
                 
-                ForEach(0..<array.count, id: \.self) { index in
+                ForEach(0..<myValues.count, id: \.self) { index in
                     // 각 요소들의 각을 잡아 줄 변수
                     let angle = Double(index) * anglePerCount
                     
                     let xOffset = CGFloat(radius * cos(angle))
                     let yOffset = CGFloat(radius * sin(angle))
                     
-                    
-                    Text("\(array[index].val)")
+                    Text("\(myValues[index].val)")
                     // Text의 방향을 잡는 코드
                         .rotationEffect(Angle(radians: angle))
                     //                        .rotationEffect(Angle(degrees: -degree))
@@ -74,24 +72,23 @@ struct WheelView: View {
             // MARK: WHEEL STACK - END
         }
         .frame(width: circleSize, height: circleSize)
-//        .background(.red)
     }
     
-    func moveWheel() {
+    private func moveWheel() {
         withAnimation(.spring()) {
             if direction == .down {
-                degree += Double(360/array.count)
+                degree += Double(360/myValues.count)
                 
                 if chosenIndex == 0 {
                     // 0번 인덱스에서 마지막 인덱스로 설정
-                    chosenIndex = array.count-1
+                    chosenIndex = myValues.count-1
                 } else {
                     chosenIndex -= 1
                 }
             } else {
-                degree -= Double(360/array.count)
+                degree -= Double(360/myValues.count)
                 
-                if chosenIndex == array.count-1 {
+                if chosenIndex == myValues.count-1 {
                     chosenIndex = 0
                 } else {
                     chosenIndex += 1
@@ -99,10 +96,9 @@ struct WheelView: View {
             }
         }
     }
-
 }
 
 
 #Preview {
-    WheelView(array: [MyValue(val: "1"), MyValue(val: "2"), MyValue(val: "3"), MyValue(val: "4"), MyValue(val: "5"), MyValue(val: "6"), MyValue(val: "7"), MyValue(val: "8"), MyValue(val: "9"), MyValue(val: "10")], circleSize: 200)
+    WheelView(myValues: [MyValue(val: "1"), MyValue(val: "2"), MyValue(val: "3"), MyValue(val: "4"), MyValue(val: "5"), MyValue(val: "6"), MyValue(val: "7"), MyValue(val: "8"), MyValue(val: "9"), MyValue(val: "10")], circleSize: 200)
 }
